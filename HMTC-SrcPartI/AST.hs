@@ -92,15 +92,20 @@ data Command
       }
     -- | Conditional command
     | CmdIf {
-          ciCond    :: Expression,      -- ^ Condition
-          ciThen    :: Command,         -- ^ Then-branch
-          ciElse    :: Command,         -- ^ Else-branch
+          ciMain    :: [(Expression, Command)], -- ^ Condition and Then
+          ciOptElse :: Maybe Command,       -- ^ Optional Else-branch
           cmdSrcPos :: SrcPos
       }
     -- | While-loop
     | CmdWhile {
           cwCond    :: Expression,      -- ^ Loop-condition
           cwBody    :: Command,         -- ^ Loop-body
+          cmdSrcPos :: SrcPos
+      }
+    -- | Repeat-Until
+    | CmdRepeat {
+          crBody    :: Command,         -- ^ Loop-body
+          crCond    :: Expression,      -- ^ Loop-condition
           cmdSrcPos :: SrcPos
       }
     -- | Let-command

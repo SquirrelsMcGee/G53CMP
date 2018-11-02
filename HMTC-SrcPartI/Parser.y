@@ -58,17 +58,21 @@ import Scanner
     ':'         { (Colon, $$) }
     ':='        { (ColEq, $$) }
     '='         { (Equals, $$) }
+    '?'         { (Question, $$) }
     BEGIN       { (Begin, $$) }
     CONST       { (Const, $$) }
     DO          { (Do, $$) }
     ELSE        { (Else, $$) }
     END         { (End, $$) }
     IF          { (If, $$) }
+    ELSIF       { (Elsif, $$)}
     IN          { (In, $$) }
     LET         { (Let, $$) }
     THEN        { (Then, $$) }
     VAR         { (Var, $$) }
     WHILE       { (While, $$) }
+    REPEAT      { (Repeat, $$) }
+    UNTIL       { (Until, $$) }
     LITINT      { (LitInt {}, _) }
     ID          { (Id {}, _) }
     '+'         { (Op {opName="+"},   _) }
@@ -86,6 +90,7 @@ import Scanner
     '||'        { (Op {opName="||"},  _) }
     '!'         { (Op {opName="!"},   _) }
 
+%right '?'
 %left '||'
 %left '&&'
 %nonassoc '<' '<=' '==' '!=' '>=' '>'
@@ -110,10 +115,12 @@ command
         { CmdAssign {caVar = $1, caVal=$3, cmdSrcPos = srcPos $1} }
     | var_expression '(' expressions ')'
         { CmdCall {ccProc = $1, ccArgs = $3, cmdSrcPos = srcPos $1} }
-    | IF expression THEN command ELSE command
-        { CmdIf {ciCond = $2, ciThen = $4, ciElse = $6, cmdSrcPos = $1} }
+    | IF expression THEN command elseIf optionalElse
+        { CmdIf {ciMain = ($2, $4) : $5, ciOptElse = $6, cmdSrcPos = $1} }
     | WHILE expression DO command
         { CmdWhile {cwCond = $2, cwBody = $4, cmdSrcPos = $1} }
+    | REPEAT command UNTIL expression
+        { CmdRepeat {crBody = $2, crCond = $4, cmdSrcPos = $1} }
     | LET declarations IN command
         { CmdLet {clDecls = $2, clBody = $4, cmdSrcPos = $1} }
     | BEGIN commands END
@@ -123,6 +130,13 @@ command
               CmdSeq {csCmds = $2, cmdSrcPos = srcPos $2}
         }
 
+elseIf :: {[(Expression, Command)]}
+       : {-empty-}                              { [] }
+       | elseIf ELSIF expression THEN command   { $1 ++ [($3, $5)] }
+
+optionalElse ::     {Maybe Command}
+    :               {Nothing}
+    | ELSE command  { Just $2 }
 
 expressions :: { [Expression] }
 expressions : expression { [$1] }
