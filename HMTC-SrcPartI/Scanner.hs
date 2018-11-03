@@ -99,7 +99,10 @@ scanner cont = P $ scan
         scan l c (')' : s)  = retTkn RPar l c (c + 1) s
         scan l c (',' : s)  = retTkn Comma l c (c + 1) s
         scan l c (';' : s)  = retTkn Semicol l c (c + 1) s
+
         -- Scan Literal Characters
+        scan l c ('\'' : x : '\'' : s) = scanLitChar l c x s
+        scan l c ('\'' : '\\' : x : '\'' : s) = retTkn (LitChar (tokeniseChar x)) l c (c+4) s
         
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
@@ -121,11 +124,18 @@ scanner cont = P $ scan
                 c'         = c + 1 + length tail
         
         scanLitChar l c x s
+            | (x /= '\\' && x /= '\'') = retTkn (LitChar x) l c (c+3) s
             | otherwise = do
                 emitErrD (SrcPos l c)
+                    ("LitCHAR Lexical error: Illegal character " ++ show x ++ " (discarded)")
                 scan l (c + 1) s
         
         tokeniseChar x
+            | x == 'n' = '\n'
+            | x == 'r' = '\r'
+            | x == 't' = '\t'
+            | x == '\\'= '\\'
+            | x == '\''= '\''
         
 
         -- Allows multi-character operators.
