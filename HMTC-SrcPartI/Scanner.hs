@@ -99,6 +99,8 @@ scanner cont = P $ scan
         scan l c (')' : s)  = retTkn RPar l c (c + 1) s
         scan l c (',' : s)  = retTkn Comma l c (c + 1) s
         scan l c (';' : s)  = retTkn Semicol l c (c + 1) s
+        -- Scan Literal Characters
+        
         -- Scan numeric literals, operators, identifiers, and keywords
         scan l c (x : s) | isDigit x = scanLitInt l c x s
                          | isAlpha x = scanIdOrKwd l c x s
@@ -117,6 +119,14 @@ scanner cont = P $ scan
             where
                 (tail, s') = span isDigit s
                 c'         = c + 1 + length tail
+        
+        scanLitChar l c x s
+            | otherwise = do
+                emitErrD (SrcPos l c)
+                scan l (c + 1) s
+        
+        tokeniseChar x
+        
 
         -- Allows multi-character operators.
         -- scanOperator :: Int -> Int -> Char -> String -> D a

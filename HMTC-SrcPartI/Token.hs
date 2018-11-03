@@ -52,6 +52,7 @@ data Token
     | LitInt {liVal :: Integer}         -- ^ Integer literals
     | Id     {idName :: Name}           -- ^ Identifiers
     | Op     {opName :: Name}           -- ^ Operators
+    | LitChar{liChar :: Char}           -- ^ Character literals
 
     -- End Of File marker
     | EOF                               -- ^ End of file (input) marker.

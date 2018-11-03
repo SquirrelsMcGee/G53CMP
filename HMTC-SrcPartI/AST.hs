@@ -127,6 +127,11 @@ data Expression
           eliVal    :: Integer,         -- ^ Integer value
           expSrcPos :: SrcPos
       }
+    -- | Literal character
+     | ExpLitChar {
+          eliChar   :: Char,
+	      expSrcPos :: SrcPos
+      }
     -- | Variable reference
     | ExpVar {
           evVar     :: Name,            -- ^ Name of referenced variable
