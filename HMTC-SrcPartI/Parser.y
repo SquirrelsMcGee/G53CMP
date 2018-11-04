@@ -184,6 +184,11 @@ expression
         { ExpApp {eaFun     = $2,
                   eaArgs    = [$1,$3],
                   expSrcPos = srcPos $1} }
+    | expression '?' expression ':' expression
+        { ExpTern{etCond    = $1,
+                  etExp1    = $3,
+                  etExp2    = $5,
+                  expSrcPos = srcPos $1} }
 
 
 primary_expression :: { Expression }

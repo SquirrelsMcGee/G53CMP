@@ -143,6 +143,12 @@ data Expression
           eaArgs    :: [Expression],    -- ^ Arguments
           expSrcPos :: SrcPos
       }
+    | ExpTern {
+          etCond    :: Expression,      -- ^ Condition
+          etExp1    :: Expression,      -- ^ First Expression 
+          etExp2    :: Expression,      -- ^ Second Expression 
+          expSrcPos :: SrcPos
+      }
 
 
 instance HasSrcPos Expression where
