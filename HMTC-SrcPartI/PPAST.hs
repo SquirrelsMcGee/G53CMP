@@ -91,6 +91,7 @@ ppExpression n (ExpApp {eaFun = f, eaArgs = es, expSrcPos = sp}) =
     . ppExpression (n+1) f
     . ppSeq (n+1) ppExpression es
 -- Conditional Operator
+ppExpression n (ExpTern {etCond = c, etExp1 = e1, etExp2 = e2, expSrcPos = sp}) =
     indent n . showString "ExpTern" . spc . ppSrcPos sp . nl
     . ppExpression (n+1) c
     . ppExpression (n+1) e1
