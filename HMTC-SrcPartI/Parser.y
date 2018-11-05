@@ -131,10 +131,12 @@ command
               CmdSeq {csCmds = $2, cmdSrcPos = srcPos $2}
         }
 
+-- Non terminal for else-if statements
 elseIf :: {[(Expression, Command)]}
        : {-empty-}                              { [] }
        | elseIf ELSIF expression THEN command   { $1 ++ [($3, $5)] }
 
+-- Non terminal for optional else statements
 optionalElse ::     {Maybe Command}
     :               {Nothing}
     | ELSE command  { Just $2 }

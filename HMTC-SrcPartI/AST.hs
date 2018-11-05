@@ -90,7 +90,7 @@ data Command
           csCmds    :: [Command],       -- ^ Commands
           cmdSrcPos :: SrcPos
       }
-    -- | Conditional command
+    -- | Conditional command with Else-If and Optional Else
     | CmdIf {
           ciMain    :: [(Expression, Command)], -- ^ Condition and Then
           ciOptElse :: Maybe Command,       -- ^ Optional Else-branch
@@ -128,9 +128,9 @@ data Expression
           expSrcPos :: SrcPos
       }
     -- | Literal character
-     | ExpLitChar {
+    | ExpLitChar {
           eliChar   :: Char,
-	      expSrcPos :: SrcPos
+          expSrcPos :: SrcPos
       }
     -- | Variable reference
     | ExpVar {
