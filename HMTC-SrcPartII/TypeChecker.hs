@@ -96,11 +96,11 @@ chkCmd env (A.CmdSeq {A.csCmds = cs, A.cmdSrcPos = sp}) = do
 -- T-IF Updated for optional-else branch (ii.2)
 chkCmd env (A.CmdIf {A.ciMain = ecs, A.ciOptElse = oe,
                      A.cmdSrcPos=sp}) = do
-	ecs' <- mapM (ifBranches env) ecs
-	oe' <- mapM optionalElse env oe
-	return (CmdIf {ciMain = ecs', ciOptElse = oe', cmdSrcPos = sp})
+    ecs' <- mapM (ifBranches env) ecs
+    oe' <- mapM optionalElse env oe
+    return (CmdIf {ciMain = ecs', ciOptElse = oe', cmdSrcPos = sp})
 
-	
+
 -- YOUR CODE HERE: This has just been patched to work for the original
 -- if-then-else. The entire list ecs needs to be processed properly,
 -- and the fact that the else-branch is optional taken care of.
@@ -132,9 +132,9 @@ chkCmd env (A.CmdRepeat {A.crBody = c, A.crCond = e, A.cmdSrcPos = sp}) = do
 -- (CmdIf) function for getting if-then branches (ii.2)
 ifBranches :: Env -> (A.Expression, A.Command) -> D (Expression, Command)
 ifBranches env (e, c) = do
-	e' <- chkTpExp env e Boolean
-	c' <- chkCmd env c
-	return (e', c')
+    e' <- chkTpExp env e Boolean
+    c' <- chkCmd env c
+    return (e', c')
 
 -- (CmdIf) function for getting optional-else branch (ii.2)
 optionalElse :: Env -> Maybe A.Command -> D (Maybe Command) 
@@ -360,9 +360,9 @@ infTpExp env e@(A.ExpLitInt {A.eliVal = n, A.expSrcPos = sp}) = do
 
 -- T-LITCHR (ii.2)
 infTpExp env (A.ExpLitChr {A.elcVal = c, A.expSrcPos = sp}) = do
-	c' <- toMTChr c sp
-	return (Character,                            -- env |- c : Character
-			ExpLitChr {eliVal = c', expType = Character, expSrcPos = sp})
+    c' <- toMTChr c sp
+    return (Character,                            -- env |- c : Character
+            ExpLitChr {eliVal = c', expType = Character, expSrcPos = sp})
 
 -- T-VAR
 infTpExp env (A.ExpVar {A.evVar = x, A.expSrcPos = sp}) = do
@@ -436,11 +436,11 @@ infTpExp env (A.ExpPrj {A.epRcd = e, A.epFld = f, A.expSrcPos = sp}) = do
 
 -- T-COND (ii.2)
 infTpExp env (A.ExpCond {A.ecCond = e, A.ecTrue = t, A.ecFalse = f, A.expSrcPos = sp}) = do
-	e' <- chkTpExp env e Boolean
-	(ct', t') <- infNonRefTpExp env t
-	(ct'', f') <- infNonRefTpExp env f
-	require (ct' == ct'') sp "Both Expressions have to be reference type or non-reference type, not both"
-	return (ct', ExpCond {ecCond = e', ecTrue = t', ecFalse = f', expType = ct', expSrcPos = sp})
+    e' <- chkTpExp env e Boolean
+    (ct', t') <- infNonRefTpExp env t
+    (ct'', f') <- infNonRefTpExp env f
+    require (ct' == ct'') sp "Both Expressions have to be reference type or non-reference type, not both"
+    return (ct', ExpCond {ecCond = e', ecTrue = t', ecFalse = f', expType = ct', expSrcPos = sp})
 
 -- Check that expression is well-typed in the given environment and
 -- infer its type assuming it should be an non-reference type:

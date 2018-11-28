@@ -56,8 +56,8 @@ ppCommand n (CmdSeq {csCmds = cs, cmdSrcPos = sp}) =
 -- Updated If-then with optional else (ii.2)
 ppCommand n (CmdIf {ciMain = ecs, ciOptElse = oe, cmdSrcPos = sp}) =
     indent n . showString "CmdIf" . spc . ppSrcPos sp . nl
-	. ppSeq (n+1) (\n (e,c) -> ppExpression n e . pp Command n c ) ecs
-	. ppOpt (n+1) ppCommand os
+    . ppSeq (n+1) (\n (e,c) -> ppExpression n e . pp Command n c ) ecs
+    . ppOpt (n+1) ppCommand os
 ppCommand n (CmdWhile {cwCond = e, cwBody = c, cmdSrcPos = sp}) =
     indent n . showString "CmdWhile" . spc . ppSrcPos sp . nl
     . ppExpression (n+1) e
@@ -70,7 +70,7 @@ ppCommand n (CmdLet {clDecls = ds, clBody = c, cmdSrcPos = sp}) =
 ppCommand n (CmdRepeat {crBody = c, crCond = e, cmdSrcPos = sp}) =
     indent n . showString "CmdRepeat" . spc . ppSrcPos sp . nl
     . ppCommand (n+1) c
-	. ppExpression (n+1) e
+    . ppExpression (n+1) e
 
 ------------------------------------------------------------------------------
 -- Pretty printing of expressions
@@ -120,11 +120,11 @@ ppExpression n (ExpPrj {epRcd = r, epFld = f, expType = t, expSrcPos = sp}) =
     . indent n . showString ": " . shows t . nl
 -- Conditional Expression Pretty print (ii.2)
 ppExpression n (ExpCond {ecCond = e, ecTrue = e1, ecFalse = e2, expType = t,expSrcPos = sp}) =
-	indent n . showString "ExpCond" . spc . ppSrcPos sp . nl
-	. ppExpression (n+1) e
-	. ppExpression (n+1) e1
-	. ppExpression (n+1) e2
-	.indent n . showString ": " . shows t . nl
+    indent n . showString "ExpCond" . spc . ppSrcPos sp . nl
+    . ppExpression (n+1) e
+    . ppExpression (n+1) e1
+    . ppExpression (n+1) e2
+    .indent n . showString ": " . shows t . nl
 
 
 ------------------------------------------------------------------------------

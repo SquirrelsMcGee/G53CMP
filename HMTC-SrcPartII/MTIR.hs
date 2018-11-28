@@ -80,10 +80,10 @@ data Command
           clBody    :: Command,         -- ^ Let-body
           cmdSrcPos :: SrcPos
       }
-	-- | Repeat-command (ii.2)
+    -- | Repeat-command (ii.2)
     | CmdRepeat {
-          crBody    :: Command,			-- ^ Commmand
-          crCond    :: Expression,		-- ^ Condition
+          crBody    :: Command,         -- ^ Commmand
+          crCond    :: Expression,      -- ^ Condition
           cmdSrcPos :: SrcPos
       }
 
@@ -163,13 +163,13 @@ data Expression
           expType   :: Type,
           expSrcPos :: SrcPos
       }
-	-- | Conditional Expression (ii.2)
-	| ExpCond {
-		  ecCond	:: Expression		-- ^ Condition
-		  ecTrue	:: Expression 		-- ^ Value if condition true
-		  ecFalse   :: Expression		-- ^ Value if condition false
-		  expType	:: Type
-		  expSrcPos :: SrcPos
+    -- | Conditional Expression (ii.2)
+    | ExpCond {
+          ecCond    :: Expression        -- ^ Condition
+          ecTrue    :: Expression         -- ^ Value if condition true
+          ecFalse   :: Expression        -- ^ Value if condition false
+          expType    :: Type
+          expSrcPos :: SrcPos
       }
 
 
