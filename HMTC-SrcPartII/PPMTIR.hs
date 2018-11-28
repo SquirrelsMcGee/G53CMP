@@ -118,6 +118,13 @@ ppExpression n (ExpPrj {epRcd = r, epFld = f, expType = t, expSrcPos = sp}) =
     . ppExpression (n+1) r
     . indent (n+1) . ppName f . nl
     . indent n . showString ": " . shows t . nl
+-- Conditional Expression Pretty print (ii.2)
+ppExpression n (ExpCond {ecCond = e, ecTrue = e1, ecFalse = e2, expType = t,expSrcPos = sp}) =
+	indent n . showString "ExpCond" . spc . ppSrcPos sp . nl
+	. ppExpression (n+1) e
+	. ppExpression (n+1) e1
+	. ppExpression (n+1) e2
+	.indent n . showString ": " . shows t . nl
 
 
 ------------------------------------------------------------------------------

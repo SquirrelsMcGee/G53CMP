@@ -164,6 +164,14 @@ data Expression
           expType   :: Type,
           expSrcPos :: SrcPos
       }
+	-- | Conditional Expression (ii.2)
+	| ExpCond {
+		  ecCond	:: Expression		-- ^ Condition
+		  ecTrue	:: Expression 		-- ^ Value if condition true
+		  ecFalse   :: Expression		-- ^ Value if condition false
+		  expType	:: Type
+		  expSrcPos :: SrcPos
+      }
 
 
 instance HasSrcPos Expression where
