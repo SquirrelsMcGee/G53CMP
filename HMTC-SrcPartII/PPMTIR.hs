@@ -54,10 +54,10 @@ ppCommand n (CmdSeq {csCmds = cs, cmdSrcPos = sp}) =
     indent n . showString "CmdSeq" . spc . ppSrcPos sp . nl
     . ppSeq (n+1) ppCommand cs
 -- Updated If-then with optional else (ii.2)
-ppCommand n (CmdIf {ciMain = ecs, ciOptElse = oe, cmdSrcPos = sp}) =
+ppCommand n (CmdIf {ciCondThens = ecs, ciMbElse = me, cmdSrcPos = sp}) =
     indent n . showString "CmdIf" . spc . ppSrcPos sp . nl
     . ppSeq (n+1) (\n (e,c) -> ppExpression n e . ppCommand n c ) ecs
-    . ppOpt (n+1) ppCommand oe
+    . ppOpt (n+1) ppCommand me
 ppCommand n (CmdWhile {cwCond = e, cwBody = c, cmdSrcPos = sp}) =
     indent n . showString "CmdWhile" . spc . ppSrcPos sp . nl
     . ppExpression (n+1) e

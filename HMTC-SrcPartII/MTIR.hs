@@ -64,8 +64,8 @@ data Command
       }
     -- | Updated Conditional command (ii.2)
     | CmdIf {
-          ciMain    :: [(Expression, Command)],      -- ^ Condition and Then-branch
-          ciOptElse :: Maybe Command,   -- ^ Optional Else-branch
+          ciCondThens :: [(Expression, Command)],      -- ^ Condition and Then-branch
+          ciMbElse  :: Maybe Command,   -- ^ Optional Else-branch
           cmdSrcPos :: SrcPos
       }
     -- | While-loop

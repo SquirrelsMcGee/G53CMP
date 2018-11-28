@@ -149,16 +149,12 @@ execute majl env n (CmdCall {ccProc = p, ccArgs = as}) = do
     evaluate majl env p
     emit CALLI
 execute majl env n (CmdSeq {csCmds = cs}) = executeSeq majl env n cs
-execute majl env n (CmdIf {ciCond = e, ciThen = c1, ciElse = c2}) = do
-    lblElse <- newName
-    lblOver <- newName
-    evaluate majl env e
-    emit (JUMPIFZ lblElse)
-    execute majl env n c1
-    emit (JUMP lblOver)
-    emit (Label lblElse)
-    execute majl env n c2
-    emit (Label lblOver)
+-- Updated CmdIf (ii.2)
+execute majl env n (CmdIf {ciCondThens = ecs, ciMbElse = me}) = do
+    lblEnd <- newName
+    mapM_ (ifBranches majl env n lblEnd) ecs
+    optionalElse majl env n me
+    emit (Label lblEnd)
 execute majl env n (CmdWhile {cwCond = e, cwBody = c}) = do
     lblLoop <- newName
     lblCond <- newName
@@ -173,7 +169,21 @@ execute majl env n (CmdLet {clDecls = ds, clBody = c}) = do
     execute majl env' n' c
     emit (POP 0 (n' - n))
 
+-- (ii.2)
+ifBranches :: MSL -> CGEnv -> MTInt -> Name -> (Expression, Command) -> TAMCG()
+ifBranches majl env n l (e, c) = do
+    lblEnd <- newName  
+    evaluate majl env e
+    emit (JUMPIFZ lblEnd)
+    execute majl env n c
+    emit (JUMP l)
+    emit(Label lblEnd)
 
+-- (ii.2)
+optionalElse :: MSL -> CGEnv -> MTInt -> Maybe Command -> TAMCG()
+optionalElse majl env n (Nothing) = (return ())
+optionalElse majl env n (Just c) = do
+    execute majl env n c
 -- Generate code to execute a sequence of commands.
 -- Invariant: Stack depth unchanged.
 -- Arguments:

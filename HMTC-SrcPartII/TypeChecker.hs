@@ -94,11 +94,10 @@ chkCmd env (A.CmdSeq {A.csCmds = cs, A.cmdSrcPos = sp}) = do
     cs' <- mapM (chkCmd env) cs                         -- env |- cs
     return (CmdSeq {csCmds = cs', cmdSrcPos = sp})
 -- T-IF Updated for optional-else branch (ii.2)
-chkCmd env (A.CmdIf {A.ciMain = ecs, A.ciOptElse = oe,
-                     A.cmdSrcPos=sp}) = do
+chkCmd env (A.CmdIf {A.ciCondThens = ecs, A.ciMbElse = me, A.cmdSrcPos=sp}) = do
     ecs' <- mapM (ifBranches env) ecs
-    oe' <- mapM optionalElse env oe
-    return (CmdIf {ciMain = ecs', ciOptElse = oe', cmdSrcPos = sp})
+    me' <- optionalElse env me
+    return (CmdIf {ciCondThens = ecs', ciMbElse = me', cmdSrcPos = sp})
 
 
 -- YOUR CODE HERE: This has just been patched to work for the original
@@ -137,7 +136,7 @@ ifBranches env (e, c) = do
     return (e', c')
 
 -- (CmdIf) function for getting optional-else branch (ii.2)
-optionalElse :: Env -> Maybe A.Command -> D (Maybe Command) 
+optionalElse :: Env -> Maybe A.Command ->  D (Maybe Command)
 optionalElse env Nothing = return (Nothing)
 optionalElse env (Just c) = do
     c' <- chkCmd env c 
@@ -362,7 +361,7 @@ infTpExp env e@(A.ExpLitInt {A.eliVal = n, A.expSrcPos = sp}) = do
 infTpExp env (A.ExpLitChr {A.elcVal = c, A.expSrcPos = sp}) = do
     c' <- toMTChr c sp
     return (Character,                            -- env |- c : Character
-            ExpLitChr {eliVal = c', expType = Character, expSrcPos = sp})
+            ExpLitChr {elcVal = c', expType = Character, expSrcPos = sp})
 
 -- T-VAR
 infTpExp env (A.ExpVar {A.evVar = x, A.expSrcPos = sp}) = do
