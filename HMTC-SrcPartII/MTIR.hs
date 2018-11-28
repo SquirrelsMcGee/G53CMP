@@ -165,10 +165,10 @@ data Expression
       }
     -- | Conditional Expression (ii.2)
     | ExpCond {
-          ecCond    :: Expression        -- ^ Condition
-          ecTrue    :: Expression         -- ^ Value if condition true
-          ecFalse   :: Expression        -- ^ Value if condition false
-          expType    :: Type
+          ecCond    :: Expression,        -- ^ Condition
+          ecTrue    :: Expression,         -- ^ Value if condition true
+          ecFalse   :: Expression,        -- ^ Value if condition false
+          expType   :: Type,
           expSrcPos :: SrcPos
       }
 
