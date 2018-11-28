@@ -116,6 +116,11 @@ chkCmd env (A.CmdLet {A.clDecls = ds, A.clBody = c, A.cmdSrcPos = sp}) = do
                        chkDeclarations (openMinScope env) env' ds 
     c'          <- chkCmd env' c                        -- env' |- c
     return (CmdLet {clDecls = ds', clBody = c', cmdSrcPos = sp})
+-- T-REPEAT (ii.2)
+chkCmd env (A.CmdRepeat {A.crBody = c, A.crCond = e, A.cmdSrcPos = sp}) = do
+    c' <- chkCmd env c
+    e' <- chkTpExp env e Boolean
+    return (CmdRepeat {crBody = c', crCond = e', cmdSrcPos = sp})
 
 
 -- Check that declarations/definitions are well-typed in given environment
