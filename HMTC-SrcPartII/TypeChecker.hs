@@ -93,18 +93,25 @@ chkCmd env (A.CmdCall {A.ccProc = p, A.ccArgs = es, A.cmdSrcPos = sp}) = do
 chkCmd env (A.CmdSeq {A.csCmds = cs, A.cmdSrcPos = sp}) = do
     cs' <- mapM (chkCmd env) cs                         -- env |- cs
     return (CmdSeq {csCmds = cs', cmdSrcPos = sp})
--- T-IF
-chkCmd env (A.CmdIf {A.ciCondThens = ecs, A.ciMbElse = mc2,
+-- T-IF Updated for optional-else branch (ii.2)
+chkCmd env (A.CmdIf {A.ciMain = ecs, A.ciOptElse = oe,
                      A.cmdSrcPos=sp}) = do
+	ecs' <- mapM (ifBranches env) ecs
+	oe' <- mapM optionalElse env oe
+	return (CmdIf {ciMain = ecs', ciOptElse = oe', cmdSrcPos = sp})
+
+	
 -- YOUR CODE HERE: This has just been patched to work for the original
 -- if-then-else. The entire list ecs needs to be processed properly,
 -- and the fact that the else-branch is optional taken care of.
-    let (e, c1) = head ecs      -- Not wrong, but unnecessary
-    let c2      = fromJust mc2  -- Wrong: the else-branch might not be there.
-    e'  <- chkTpExp env e Boolean                       -- env |- e : Boolean
-    c1' <- chkCmd env c1                                -- env |- c1
-    c2' <- chkCmd env c2                                -- env |- c2
-    return (CmdIf {ciCond = e', ciThen = c1', ciElse = c2', cmdSrcPos = sp})
+--    let (e, c1) = head ecs      -- Not wrong, but unnecessary
+--    let c2      = fromJust mc2  -- Wrong: the else-branch might not be there.
+--    e'  <- chkTpExp env e Boolean                       -- env |- e : Boolean
+--    c1' <- chkCmd env c1                                -- env |- c1
+--    c2' <- chkCmd env c2                                -- env |- c2
+--    return (CmdIf {ciCond = e', ciThen = c1', ciElse = c2', cmdSrcPos = sp})
+
+
 -- T-WHILE
 chkCmd env (A.CmdWhile {A.cwCond = e, A.cwBody = c, A.cmdSrcPos = sp}) = do
     e' <- chkTpExp env e Boolean                        -- env |- e : Boolean
@@ -122,6 +129,19 @@ chkCmd env (A.CmdRepeat {A.crBody = c, A.crCond = e, A.cmdSrcPos = sp}) = do
     e' <- chkTpExp env e Boolean
     return (CmdRepeat {crBody = c', crCond = e', cmdSrcPos = sp})
 
+-- (CmdIf) function for getting if-then branches (ii.2)
+ifBranches :: Env -> (A.Expression, A.Command) -> D (Expression, Command)
+ifBranches env (e, c) = do
+	e' <- chkTpExp env e Boolean
+	c' <- chkCmd env c
+	return (e', c')
+
+-- (CmdIf) function for getting optional-else branch (ii.2)
+optionalElse :: Env -> Maybe A.Command -> D (Maybe Command) 
+optionalElse env Nothing = return (Nothing)
+optionalElse env (Just c) = do
+    c' <- chkCmd env c 
+    return (Just c')
 
 -- Check that declarations/definitions are well-typed in given environment
 -- and environmant for function/procedure bodies and compute extended
