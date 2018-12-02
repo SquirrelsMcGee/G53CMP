@@ -1,0 +1,47 @@
+module MyTAMCode where
+
+import TAMCode
+import TAMInterpreter
+
+myTAMCode3a = [GETINT,
+    LOADL 1,
+    Label "pn_loopStart",
+    LOAD (SB 0),
+    LOAD (SB 1),
+    LSS,
+    JUMPIFNZ "pn_loopEnd",
+    LOAD (SB 1),
+    PUTINT,
+    LOADL 1,
+    ADD,
+    JUMP "pn_loopStart",
+    Label "pn_loopEnd",
+    HALT
+]
+
+myTAMCode3b = [
+    GETINT,
+    LOAD (SB, 0),
+    LOADL 0,
+    GTR,
+    JUMPIFZ "fc_GreaterThan",
+    LOAD (SB 0),
+    Label "fc_loopStart",
+    LOADL 1,
+    SUB,
+    LOAD (SB 1),
+    JUMPIFZ "fc_loopEnd",
+    LOAD (SB, 0),
+    LOAD (SB, 1),
+    MUL,
+    STORE (SB, 0),
+    LOAD (SB, 1).
+    JUMPIFNZ "fc_loopStart",
+    Label "fc_loopEnd",
+	ADD,
+	PUTINT,
+	HALT,
+	Label "fc_GreaterThan",
+	LOADL 1,
+	PUTINT,
+]
