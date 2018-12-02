@@ -68,7 +68,7 @@ data Type = SomeType            -- ^ Some unknown type
           | Void                -- ^ The empty type (return type of procedures)
           | Boolean             -- ^ The Boolean type
           | Integer             -- ^ The Integer type
-          | Character            -- ^ The Character type (II.2)
+          | Character           -- ^ The Character type (II.2)
           | Src Type            -- ^ Read-only variable reference (source)
           | Snk Type            -- ^ Write-only variable reference (sink)
           | Ref Type            -- ^ Variable reference

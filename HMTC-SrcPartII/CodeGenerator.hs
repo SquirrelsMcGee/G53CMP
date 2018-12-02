@@ -149,12 +149,12 @@ execute majl env n (CmdCall {ccProc = p, ccArgs = as}) = do
     evaluate majl env p
     emit CALLI
 execute majl env n (CmdSeq {csCmds = cs}) = executeSeq majl env n cs
--- Updated CmdIf (ii.2)
+-- Updated CmdIf (ii.3)
 execute majl env n (CmdIf {ciCondThens = ecs, ciMbElse = me}) = do
-    lblEnd <- newName
-    mapM_ (ifBranches majl env n lblEnd) ecs
-    optionalElse majl env n me
-    emit (Label lblEnd)
+    endLabel <- newName
+    mapM_ (ifHandler majl env n endLabel) ecs
+    elseHandler majl env n me
+    emit (Label endLabel)
 execute majl env n (CmdWhile {cwCond = e, cwBody = c}) = do
     lblLoop <- newName
     lblCond <- newName
@@ -168,22 +168,29 @@ execute majl env n (CmdLet {clDecls = ds, clBody = c}) = do
     (env', n') <- elaborateDecls majl env n ds
     execute majl env' n' c
     emit (POP 0 (n' - n))
-
--- (ii.2)
-ifBranches :: MSL -> CGEnv -> MTInt -> Name -> (Expression, Command) -> TAMCG()
-ifBranches majl env n l (e, c) = do
-    lblEnd <- newName  
+execute majl env n (CmdRepeat {crBody = c, crCond = e}) = do
+    loopLabel <- newName
+    emit (Label loopLabel)
+    execute majl env n c
     evaluate majl env e
-    emit (JUMPIFZ lblEnd)
+    emit (JUMPIFZ loopLabel)
+
+-- (ii.3c)
+ifHandler :: MSL -> CGEnv -> MTInt -> Name -> (Expression, Command) -> TAMCG()
+ifHandler majl env n l (e, c) = do
+    endLabel <- newName  
+    evaluate majl env e
+    emit (JUMPIFZ endLabel)
     execute majl env n c
     emit (JUMP l)
-    emit(Label lblEnd)
+    emit (Label endLabel)
 
--- (ii.2)
-optionalElse :: MSL -> CGEnv -> MTInt -> Maybe Command -> TAMCG()
-optionalElse majl env n (Nothing) = (return ())
-optionalElse majl env n (Just c) = do
+-- (ii.3c)
+elseHandler :: MSL -> CGEnv -> MTInt -> Maybe Command -> TAMCG()
+elseHandler majl env n (Nothing) = (return ())
+elseHandler majl env n (Just c) = do
     execute majl env n c
+    
 -- Generate code to execute a sequence of commands.
 -- Invariant: Stack depth unchanged.
 -- Arguments:
@@ -392,7 +399,16 @@ evaluate majl env (ExpPrj {epRcd = r, epFld = f, expType = t}) = do
     evaluate majl env r
     emit (LOADL (fldOffset f tr))
     emit ADD
-
+evaluate majl env (ExpCond {ecCond = e, ecTrue = e1, ecFalse = e2, expType = t}) = do
+    trueLabel <- newName
+    endLabel <- newName
+    evaluate majl env e
+    emit (JUMPIFNZ trueLabel)
+    evaluate majl env e2
+    emit (JUMP endLabel)
+    emit (Label trueLabel)
+    evaluate majl env e1
+    emit (Label endLabel)
 
 ------------------------------------------------------------------------------
 -- Code generation for variable access and computation of static links
