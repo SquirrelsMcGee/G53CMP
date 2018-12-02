@@ -38,10 +38,10 @@ myTAMCode3b = [
     LOAD (SB, 1).
     JUMPIFNZ "fc_loopStart",
     Label "fc_loopEnd",
-	ADD,
-	PUTINT,
-	HALT,
-	Label "fc_GreaterThan",
-	LOADL 1,
-	PUTINT,
+    ADD,
+    PUTINT,
+    HALT,
+    Label "fc_GreaterThan",
+    LOADL 1,
+    PUTINT,
 ]

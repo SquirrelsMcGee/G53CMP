@@ -149,7 +149,7 @@ execute majl env n (CmdCall {ccProc = p, ccArgs = as}) = do
     evaluate majl env p
     emit CALLI
 execute majl env n (CmdSeq {csCmds = cs}) = executeSeq majl env n cs
--- Updated CmdIf (ii.3)
+-- Updated CmdIf (ii.4)
 execute majl env n (CmdIf {ciCondThens = ecs, ciMbElse = me}) = do
     endLabel <- newName
     mapM_ (ifHandler majl env n endLabel) ecs
@@ -175,7 +175,7 @@ execute majl env n (CmdRepeat {crBody = c, crCond = e}) = do
     evaluate majl env e
     emit (JUMPIFZ loopLabel)
 
--- (ii.3c)
+-- (ii.4)
 ifHandler :: MSL -> CGEnv -> MTInt -> Name -> (Expression, Command) -> TAMCG()
 ifHandler majl env n l (e, c) = do
     endLabel <- newName  
@@ -185,7 +185,7 @@ ifHandler majl env n l (e, c) = do
     emit (JUMP l)
     emit (Label endLabel)
 
--- (ii.3c)
+-- (ii.4)
 elseHandler :: MSL -> CGEnv -> MTInt -> Maybe Command -> TAMCG()
 elseHandler majl env n (Nothing) = (return ())
 elseHandler majl env n (Just c) = do

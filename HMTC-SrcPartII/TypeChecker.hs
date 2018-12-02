@@ -95,8 +95,8 @@ chkCmd env (A.CmdSeq {A.csCmds = cs, A.cmdSrcPos = sp}) = do
     return (CmdSeq {csCmds = cs', cmdSrcPos = sp})
 -- T-IF Updated for optional-else branch (ii.2)
 chkCmd env (A.CmdIf {A.ciCondThens = ecs, A.ciMbElse = me, A.cmdSrcPos=sp}) = do
-    ecs' <- mapM (ifBranches env) ecs
-    me' <- optionalElse env me
+    ecs' <- mapM (ifHandler env) ecs
+    me' <- elseHandler env me
     return (CmdIf {ciCondThens = ecs', ciMbElse = me', cmdSrcPos = sp})
 
 
@@ -129,16 +129,16 @@ chkCmd env (A.CmdRepeat {A.crBody = c, A.crCond = e, A.cmdSrcPos = sp}) = do
     return (CmdRepeat {crBody = c', crCond = e', cmdSrcPos = sp})
 
 -- (CmdIf) function for getting if-then branches (ii.2)
-ifBranches :: Env -> (A.Expression, A.Command) -> D (Expression, Command)
-ifBranches env (e, c) = do
+ifHandler :: Env -> (A.Expression, A.Command) -> D (Expression, Command)
+ifHandler env (e, c) = do
     e' <- chkTpExp env e Boolean
     c' <- chkCmd env c
     return (e', c')
 
 -- (CmdIf) function for getting optional-else branch (ii.2)
-optionalElse :: Env -> Maybe A.Command ->  D (Maybe Command)
-optionalElse env Nothing = return (Nothing)
-optionalElse env (Just c) = do
+elseHandler :: Env -> Maybe A.Command ->  D (Maybe Command)
+elseHandler env Nothing = return (Nothing)
+elseHandler env (Just c) = do
     c' <- chkCmd env c 
     return (Just c')
 
