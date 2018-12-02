@@ -90,3 +90,5 @@ mtStdEnv =
          ("getchr",  Arr [Snk Character] Void,       ESVLbl "getchr"),
          ("putchr",  Arr [Character] Void,           ESVLbl "putchr"),
          ("skip",    Arr [] Void,                    ESVLbl "skip")]
+
+-- getchr and putchr added for task ii.3c
