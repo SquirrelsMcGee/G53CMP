@@ -168,6 +168,7 @@ execute majl env n (CmdLet {clDecls = ds, clBody = c}) = do
     (env', n') <- elaborateDecls majl env n ds
     execute majl env' n' c
     emit (POP 0 (n' - n))
+-- T-REPEAT (ii.4)
 execute majl env n (CmdRepeat {crBody = c, crCond = e}) = do
     loopLabel <- newName
     emit (Label loopLabel)
@@ -399,6 +400,7 @@ evaluate majl env (ExpPrj {epRcd = r, epFld = f, expType = t}) = do
     evaluate majl env r
     emit (LOADL (fldOffset f tr))
     emit ADD
+-- (ii.4)
 evaluate majl env (ExpCond {ecCond = e, ecTrue = e1, ecFalse = e2, expType = t}) = do
     trueLabel <- newName
     endLabel <- newName
@@ -509,7 +511,7 @@ sizeOf SomeType  = cgErr "sizeOf" sizeOfErrMsgSomeType
 sizeOf Void      = 0
 sizeOf Boolean   = 1
 sizeOf Integer   = 1
--- sizeOf Character = 1
+sizeOf Character = 1 -- (ii.4)
 sizeOf (Src _)   = 1
 sizeOf (Snk _)   = 1
 sizeOf (Ref _)   = 1
